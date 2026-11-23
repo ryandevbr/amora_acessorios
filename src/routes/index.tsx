@@ -1,0 +1,112 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Gem, MapPin, Clock, MessageCircle } from "lucide-react";
+import hero from "@/assets/hero.jpg";
+import { Catalog } from "@/components/store/Catalog";
+import { CartButton, CartSheet } from "@/components/store/CartSheet";
+import { Link } from "@tanstack/react-router";
+
+const WA = "https://wa.me/5531988813158?text=" + encodeURIComponent("Olá, Amora! Vim pelo site e gostaria de saber mais sobre os acessórios.");
+const MAPS = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Rua 68, 22, Olaria, Timóteo - MG");
+
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Amora Acessórios | Joias e semijoias em Timóteo - MG" },
+      { name: "description", content: "Pulseiras, anéis, colares e bolsas na Amora. Visite nossa loja em Olaria, Timóteo - MG, ou fale pelo WhatsApp." },
+      { property: "og:title", content: "Amora Acessórios — Timóteo, MG" },
+      { property: "og:description", content: "Acessórios que brilham com você. Visite a loja ou chame no WhatsApp." },
+      { property: "og:image", content: hero },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: hero },
+    ],
+  }),
+  component: Index,
+});
+
+const hours = [
+  { d: "Segunda e terça", h: "14h às 18h30" },
+  { d: "Quarta a sexta", h: "9h às 18h30" },
+  { d: "Sábado", h: "9h às 16h" },
+];
+
+function WaButton({ label = "Chamar no WhatsApp", light = false }: { label?: string; light?: boolean }) {
+  return (
+    <a href={WA} target="_blank" rel="noreferrer"
+      className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-widest transition-transform hover:scale-[1.03] ${light ? "bg-gold-gradient text-accent-foreground" : "bg-primary text-primary-foreground"}`}>
+      <MessageCircle className="h-5 w-5" /> {label}
+    </a>
+  );
+}
+
+function Index() {
+  return (
+    <main className="font-sans">
+      <section className="relative overflow-hidden bg-plum text-primary-foreground">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 pb-16 pt-10 md:grid-cols-2 md:py-24">
+          <div>
+            <div className="flex items-center gap-3">
+              <Gem className="h-7 w-7 text-gold" strokeWidth={1.2} />
+              <span className="text-gold-gradient font-display text-3xl font-semibold tracking-[0.3em]">AMORA</span>
+            </div>
+            <h1 className="mt-12 font-display text-5xl leading-[1.05] md:text-7xl">
+              Acessórios que <em className="text-gold-gradient">brilham</em> com você
+            </h1>
+            <p className="mt-6 max-w-md text-primary-foreground/75">
+              Pulseiras, anéis, colares e bolsas escolhidos a dedo para completar o seu estilo. Em Timóteo - MG.
+            </p>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <WaButton light />
+              <a href="#vitrine" className="inline-flex items-center justify-center rounded-full border border-gold/50 px-7 py-4 text-sm font-semibold uppercase tracking-widest text-gold">Ver vitrine</a>
+            </div>
+          </div>
+          <img src={hero} alt="Mão com pulseiras e anel dourados sobre bolsa de palha" width={1024} height={1536}
+            className="aspect-[4/5] w-full rounded-t-full object-cover shadow-2xl" />
+        </div>
+      </section>
+
+      <Catalog />
+
+      <section id="visite" className="bg-secondary">
+        <div className="mx-auto grid max-w-6xl gap-6 px-6 py-20 md:grid-cols-2">
+          <div className="rounded-2xl bg-plum p-10 text-primary-foreground">
+            <MapPin className="h-8 w-8 text-gold" />
+            <h2 className="mt-4 font-display text-5xl text-gold-gradient">Onde estamos</h2>
+            <p className="mt-6 text-lg">Rua 68, nº 22<br />Olaria, Timóteo – MG</p>
+            <a href={MAPS} target="_blank" rel="noreferrer" className="mt-8 inline-block border-b border-gold pb-1 text-sm uppercase tracking-widest text-gold">Abrir no mapa</a>
+          </div>
+          <div className="rounded-2xl bg-card p-10">
+            <Clock className="h-8 w-8 text-gold" />
+            <h2 className="mt-4 font-display text-5xl italic">Nosso horário</h2>
+            <ul className="mt-6 divide-y divide-border">
+              {hours.map((x) => (
+                <li key={x.d} className="flex justify-between py-4">
+                  <span className="font-display text-xl italic">{x.d}</span>
+                  <span className="text-muted-foreground">{x.h}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-6 py-20 text-center">
+        <h2 className="font-display text-4xl md:text-5xl">Fale com a gente</h2>
+        <p className="mt-4 text-muted-foreground">(31) 98881-3158</p>
+        <div className="mt-8"><WaButton /></div>
+      </section>
+
+      <footer className="bg-plum py-8 text-center text-xs uppercase tracking-widest text-primary-foreground/60">
+        © {new Date().getFullYear()} Amora Acessórios · Timóteo – MG
+        <Link to="/admin" className="mt-3 block text-[10px] opacity-40">Área da loja</Link>
+      </footer>
+
+      <a href={WA} target="_blank" rel="noreferrer" aria-label="WhatsApp"
+        className="bg-gold-gradient fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-accent-foreground shadow-xl">
+        <MessageCircle className="h-6 w-6" />
+      </a>
+      <CartButton />
+      <CartSheet />
+    </main>
+  );
+}
