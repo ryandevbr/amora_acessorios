@@ -8,7 +8,7 @@ const lines = [
 
 describe("pedido", () => {
   it("soma o total", () => expect(cartTotal(lines)).toBe(164.7));
-  it("usa o número da loja", () => expect(WHATSAPP_NUMBER).toBe("5531988813158"));
+  it("usa o número da loja", () => expect(WHATSAPP_NUMBER).toBe("5531997515006"));
   it("mensagem tem nome, itens, recebimento e total", () => {
     const m = buildOrderMessage(lines, "entrega", "Ana");
     expect(m).toContain("Ana");

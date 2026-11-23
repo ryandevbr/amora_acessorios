@@ -5,7 +5,7 @@ import { Catalog } from "@/components/store/Catalog";
 import { CartButton, CartSheet } from "@/components/store/CartSheet";
 import { Link } from "@tanstack/react-router";
 
-const WA = "https://wa.me/5531988813158?text=" + encodeURIComponent("Olá, Amora! Vim pelo site e gostaria de saber mais sobre os acessórios.");
+const WA = "https://wa.me/5531997515006?text=" + encodeURIComponent("Olá, Amora! Vim pelo site e gostaria de saber mais sobre os acessórios.");
 const MAPS = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Rua 68, 22, Olaria, Timóteo - MG");
 
 export const Route = createFileRoute("/")({
@@ -92,7 +92,7 @@ function Index() {
 
       <section className="mx-auto max-w-3xl px-6 py-20 text-center">
         <h2 className="font-display text-4xl md:text-5xl">Fale com a gente</h2>
-        <p className="mt-4 text-muted-foreground">(31) 98881-3158</p>
+        <p className="mt-4 text-muted-foreground">(31) 99751-5006</p>
         <div className="mt-8"><WaButton /></div>
       </section>
 
