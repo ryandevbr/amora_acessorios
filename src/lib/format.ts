@@ -1,4 +1,4 @@
-export const WHATSAPP_NUMBER = "5531997515006";
+export const WHATSAPP_NUMBER = "5531988813158";
 
 export function brl(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

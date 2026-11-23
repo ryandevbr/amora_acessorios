@@ -5,7 +5,7 @@ import { Catalog } from "@/components/store/Catalog";
 import { CartButton, CartSheet } from "@/components/store/CartSheet";
 import { Link } from "@tanstack/react-router";
 
-const WA = "https://wa.me/5531997515006?text=" + encodeURIComponent("Olá, Amora! Vim pelo site e gostaria de saber mais sobre os acessórios.");
+const WA = "https://wa.me/5531988813158?text=" + encodeURIComponent("Olá, Amora! Vim pelo site e gostaria de saber mais sobre os acessórios.");
 const MAPS = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Rua 68, 22, Olaria, Timóteo - MG");
 
 export const Route = createFileRoute("/")({
@@ -92,13 +92,39 @@ function Index() {
 
       <section className="mx-auto max-w-3xl px-6 py-20 text-center">
         <h2 className="font-display text-4xl md:text-5xl">Fale com a gente</h2>
-        <p className="mt-4 text-muted-foreground">(31) 99751-5006</p>
+        <p className="mt-4 text-muted-foreground">(31) 98881-3158</p>
         <div className="mt-8"><WaButton /></div>
       </section>
 
-      <footer className="bg-plum py-8 text-center text-xs uppercase tracking-widest text-primary-foreground/60">
-        © {new Date().getFullYear()} Amora Acessórios · Timóteo – MG
-        <Link to="/admin" className="mt-3 block text-[10px] opacity-40">Área da loja</Link>
+      <footer className="bg-plum px-6 py-8 text-xs uppercase tracking-widest text-primary-foreground/60">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-4 md:grid-cols-3">
+          {/* Canto esquerdo: sua assinatura */}
+          <a
+            href="https://instagram.com/ryan.devbr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="order-2 justify-self-start text-[10px] opacity-50 transition-opacity hover:opacity-100 md:order-1"
+          >
+            Feito por{" "}
+            <span className="font-medium text-primary-foreground underline decoration-primary-foreground/30 underline-offset-4">
+              @ryan.devbr
+            </span>
+          </a>
+
+          {/* Centro: dados da loja e acesso admin */}
+          <div className="order-1 text-center md:order-2">
+            <p>© {new Date().getFullYear()} Amora Acessórios · Timóteo – MG</p>
+            <Link
+              to="/admin"
+              className="mt-3 inline-block text-[10px] opacity-40 transition-opacity hover:opacity-80"
+            >
+              Área da loja
+            </Link>
+          </div>
+
+          {/* Coluna direita vazia para manter o centro alinhado no desktop */}
+          <div className="hidden md:order-3 md:block" />
+        </div>
       </footer>
 
       <a href={WA} target="_blank" rel="noreferrer" aria-label="WhatsApp"
