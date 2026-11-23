@@ -61,7 +61,7 @@ function Index() {
             </div>
           </div>
           <img src={hero} alt="Mão com pulseiras e anel dourados sobre bolsa de palha" width={1024} height={1536}
-            className="aspect-[4/5] w-full rounded-t-full object-cover shadow-2xl" />
+            className="aspect-4/5 w-full rounded-t-full object-cover shadow-2xl" />
         </div>
       </section>
 
