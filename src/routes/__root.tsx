@@ -78,7 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "color-scheme", content: "light" },
+      { name: "color-scheme", content: "only light" },
       { title: "Amora Acessórios | Joias e semijoias em Timóteo - MG" },
       {
         name: "description",
@@ -114,7 +114,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR" className="light" style={{ colorScheme: "light" }}>
+    <html lang="pt-BR" className="light" style={{ colorScheme: "only light" }}>
       <head>
         <HeadContent />
       </head>

@@ -77,7 +77,8 @@
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: only light;
+  forced-color-adjust: none;
   --radius: 0.5rem;
   --plum: oklch(0.27 0.05 340);
   --gold: oklch(0.76 0.09 80);
@@ -105,7 +106,8 @@
 
 @layer base {
   html {
-    color-scheme: light;
+    color-scheme: only light;
+    forced-color-adjust: none;
   }
 
   * {
