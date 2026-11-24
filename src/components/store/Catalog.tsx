@@ -318,12 +318,12 @@ export function Catalog() {
           {sel && (
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <div className="flex flex-col">
-                <div className="relative h-64 w-full shrink-0 overflow-hidden bg-muted sm:h-80">
+                <div className="relative flex min-h-16 w-full shrink-0 items-center justify-center overflow-hidden bg-muted">
                   {sel.image_url && (
                     <img
                       src={sel.image_url}
                       alt={sel.name}
-                      className="block h-full w-full object-cover"
+                      className="block h-auto max-h-[65dvh] w-full object-contain"
                     />
                   )}
                   <Badges p={sel} />
