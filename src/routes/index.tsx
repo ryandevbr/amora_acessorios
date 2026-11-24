@@ -1,9 +1,37 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { MapPin, Clock, MessageCircle } from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import { Catalog } from "@/components/store/Catalog";
 import { CartButton, CartSheet } from "@/components/store/CartSheet";
-import { Link } from "@tanstack/react-router";
+
+type HeroImage = { src: string; alt: string };
+
+const HERO_ALT_BY_FILE: Record<string, string> = {
+  "hero.jpg": "Mão com pulseiras e anel dourados sobre bolsa de palha",
+  "hero-2.jpg": "Acessórios dourados e peças selecionadas da Amora Acessórios",
+  "hero-3.jpg": "Bolsas e semijoias elegantes da Amora Acessórios",
+  "hero-4.jpg": "Coleção de joias, semijoias e bolsas da Amora Acessórios",
+};
+
+const discoveredHeroModules = import.meta.glob<string>(
+  "../assets/hero*.{jpg,jpeg,png,webp,avif}",
+  { eager: true, import: "default" },
+);
+
+const extraHeroImages: HeroImage[] = Object.entries(discoveredHeroModules)
+  .map(([path, src]) => ({ file: path.split("/").pop() ?? "", src }))
+  .filter(({ file }) => file !== "hero.jpg")
+  .sort((a, b) => a.file.localeCompare(b.file, undefined, { numeric: true }))
+  .map(({ file, src }, index) => ({
+    src,
+    alt: HERO_ALT_BY_FILE[file] ?? `Coleção Amora Acessórios — destaque ${index + 2}`,
+  }));
+
+const heroImages: HeroImage[] = [
+  { src: hero, alt: HERO_ALT_BY_FILE["hero.jpg"]! },
+  ...extraHeroImages,
+];
 
 const WA = "https://wa.me/5531988813158?text=" + encodeURIComponent("Olá, Amora! Vim pelo site e gostaria de saber mais sobre os acessórios.");
 const MAPS = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Rua 68, 22, Olaria, Timóteo - MG");
@@ -47,6 +75,103 @@ function WaButton({
   );
 }
 
+function HeroSlideshow() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [resetTick, setResetTick] = useState(0);
+
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mediaQuery.matches) return;
+
+    const intervalId = window.setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % heroImages.length);
+    }, 4500);
+
+    const handleMotionChange = (event: MediaQueryListEvent) => {
+      if (event.matches) window.clearInterval(intervalId);
+    };
+    mediaQuery.addEventListener("change", handleMotionChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      mediaQuery.removeEventListener("change", handleMotionChange);
+    };
+  }, [resetTick]);
+
+  function handleSelect(index: number) {
+    setActiveIndex(index);
+    setResetTick((tick) => tick + 1);
+  }
+
+  return (
+    <div className="relative w-full">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-3 rounded-t-full bg-[radial-gradient(circle_at_50%_28%,oklch(0.76_0.09_80/0.14),transparent_68%)] blur-2xl"
+      />
+      <div className="relative aspect-4/5 w-full overflow-hidden rounded-t-full shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)]">
+        {heroImages.map((img, i) => {
+          const active = i === activeIndex;
+          return (
+            <img
+              key={img.src}
+              src={img.src}
+              alt={img.alt}
+              width={1024}
+              height={1536}
+              loading={i === 0 ? "eager" : "lazy"}
+              aria-hidden={!active}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
+                active ? "z-10 opacity-100" : "z-0 opacity-0"
+              }`}
+            />
+          );
+        })}
+
+        {/* Vinheta radial suave nas bordas usando o tom plum do projeto */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,transparent_52%,oklch(0.27_0.05_340/0.62)_100%)]"
+        />
+
+        {/* Degradê de fusão na base para integrar a foto ao fundo vinho */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[34%] bg-linear-to-t from-plum via-plum/30 to-transparent"
+        />
+
+        {heroImages.length > 1 && (
+          <div
+            className="absolute inset-x-0 bottom-4 z-30 flex items-center justify-center gap-2"
+            role="tablist"
+            aria-label="Fotos em destaque"
+          >
+            {heroImages.map((img, i) => {
+              const active = i === activeIndex;
+              return (
+                <button
+                  key={img.src}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  aria-label={`Ver foto ${i + 1} de ${heroImages.length}`}
+                  onClick={() => handleSelect(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    active
+                      ? "w-5 bg-gold shadow-xs"
+                      : "w-2 bg-primary-foreground/50 hover:bg-primary-foreground/85"
+                  }`}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function Index() {
   return (
     <main className="font-sans">
@@ -86,8 +211,7 @@ function Index() {
               </div>
             </div>
           </div>
-          <img src={hero} alt="Mão com pulseiras e anel dourados sobre bolsa de palha" width={1024} height={1536}
-            className="aspect-4/5 w-full rounded-t-full object-cover shadow-2xl" />
+          <HeroSlideshow />
         </div>
       </section>
 
