@@ -37,18 +37,6 @@ const WA = "https://wa.me/5531988813158?text=" + encodeURIComponent("Olá, Amora
 const MAPS = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Rua 68, 22, Olaria, Timóteo - MG");
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Amora Acessórios | Joias e semijoias em Timóteo - MG" },
-      { name: "description", content: "Pulseiras, anéis, colares e bolsas na Amora. Visite nossa loja em Olaria, Timóteo - MG, ou fale pelo WhatsApp." },
-      { property: "og:title", content: "Amora Acessórios — Timóteo, MG" },
-      { property: "og:description", content: "Acessórios que brilham com você. Visite a loja ou chame no WhatsApp." },
-      { property: "og:image", content: hero },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: hero },
-    ],
-  }),
   component: Index,
 });
 

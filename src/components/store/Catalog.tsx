@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, Search, ShoppingBag, MessageCircle } from "lucide-react";
+import { Calendar, Check, Search, Share2, ShoppingBag, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
@@ -187,6 +187,75 @@ function Badges({ p }: { p: Product }) {
   );
 }
 
+function ShareProductButton({ product }: { product: Product }) {
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== undefined) window.clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  async function handleShare() {
+    const url = `${window.location.origin}${window.location.pathname}?produto=${encodeURIComponent(product.id)}`;
+
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({
+          title: `${product.name} · Amora Acessórios`,
+          text: "Olha essa peça da Amora Acessórios!",
+          url,
+        });
+        return;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success("Link copiado!");
+      if (timerRef.current !== undefined) window.clearTimeout(timerRef.current);
+      timerRef.current = window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      toast.error("Não foi possível copiar o link");
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleShare}
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-gold hover:text-primary"
+    >
+      {copied ? (
+        <>
+          <Check className="h-3.5 w-3.5 text-primary" />
+          <span>Link copiado!</span>
+        </>
+      ) : (
+        <>
+          <Share2 className="h-3.5 w-3.5" />
+          <span>Compartilhar</span>
+        </>
+      )}
+    </button>
+  );
+}
+
+function syncProductUrl(productId: string | null) {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  if (productId) {
+    url.searchParams.set("produto", productId);
+  } else {
+    url.searchParams.delete("produto");
+  }
+  window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
 export function Catalog() {
   const cats = useQuery(categoriesQuery);
   const prods = useQuery(productsQuery);
@@ -194,6 +263,28 @@ export function Catalog() {
   const [listingFilter, setListingFilter] = useState<ListingFilter>("all");
   const [cat, setCat] = useState<string | null>(null);
   const [sel, setSel] = useState<Product | null>(null);
+  const handledDeepLinkRef = useRef(false);
+
+  function openProduct(product: Product) {
+    setSel(product);
+    syncProductUrl(product.id);
+  }
+
+  function closeProduct() {
+    setSel(null);
+    syncProductUrl(null);
+  }
+
+  useEffect(() => {
+    if (handledDeepLinkRef.current || !prods.data) return;
+    handledDeepLinkRef.current = true;
+    const productId = new URLSearchParams(window.location.search).get("produto");
+    if (!productId) return;
+    const found = prods.data.find((p) => p.id === productId);
+    if (!found) return;
+    setSel(found);
+    document.getElementById("vitrine")?.scrollIntoView({ behavior: "smooth" });
+  }, [prods.data]);
 
   const list = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -276,7 +367,7 @@ export function Catalog() {
             >
               <button
                 type="button"
-                onClick={() => setSel(p)}
+                onClick={() => openProduct(p)}
                 className="relative block aspect-4/5 overflow-hidden bg-muted"
               >
                 {p.image_url && (
@@ -292,7 +383,7 @@ export function Catalog() {
               <div className="flex flex-1 flex-col gap-2 p-3">
                 <button
                   type="button"
-                  onClick={() => setSel(p)}
+                  onClick={() => openProduct(p)}
                   className="text-left font-display text-lg leading-tight"
                 >
                   {p.name}
@@ -300,7 +391,7 @@ export function Catalog() {
                 <div className="mt-auto">
                   <Price p={p} />
                 </div>
-                <CardActionButton p={p} onConsultRental={setSel} />
+                <CardActionButton p={p} onConsultRental={openProduct} />
               </div>
             </article>
           ))}
@@ -310,7 +401,7 @@ export function Catalog() {
         Viu algo no nosso Instagram? Mande a foto no WhatsApp e a gente separa pra você.
       </p>
 
-      <Dialog open={!!sel} onOpenChange={(o) => !o && setSel(null)}>
+      <Dialog open={!!sel} onOpenChange={(o) => !o && closeProduct()}>
         <DialogContent
           onOpenAutoFocus={(e) => e.preventDefault()}
           className="flex max-h-[90dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
@@ -329,10 +420,15 @@ export function Catalog() {
                   <Badges p={sel} />
                 </div>
                 <div className="relative z-10 flex shrink-0 flex-col gap-4 p-5 pb-7">
-                  <DialogTitle className="font-display text-3xl font-medium">
-                    {sel.name}
-                  </DialogTitle>
-                  <Price p={sel} big />
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 space-y-2">
+                      <DialogTitle className="font-display text-3xl font-medium leading-tight">
+                        {sel.name}
+                      </DialogTitle>
+                      <Price p={sel} big />
+                    </div>
+                    <ShareProductButton key={sel.id} product={sel} />
+                  </div>
                   {sel.description ? (
                     <DialogDescription className="whitespace-pre-line text-sm">
                       {sel.description}
@@ -347,8 +443,8 @@ export function Catalog() {
                   ) : (
                     <CardActionButton
                       p={sel}
-                      onConsultRental={setSel}
-                      onDone={() => setSel(null)}
+                      onConsultRental={openProduct}
+                      onDone={closeProduct}
                     />
                   )}
                 </div>

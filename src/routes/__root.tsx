@@ -13,8 +13,15 @@ import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
-import hero from "@/assets/hero.jpg";
 import appCss from "../styles.css?url";
+
+// ATENÇÃO: Atualizar esta URL base quando o domínio oficial `.com.br` for conectado.
+const SITE_URL = "https://amora-acessorios.vercel.app";
+const OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
+const DEFAULT_TITLE =
+  "Amora Acessórios | Semijoias, Acessórios e Aluguel de Bolsas em Timóteo";
+const DEFAULT_DESCRIPTION =
+  "Pulseiras, anéis, colares e aluguel de bolsas de festa em Timóteo - MG. Confira nossa vitrine online e peça pelo WhatsApp.";
 
 function NotFoundComponent() {
   return (
@@ -79,22 +86,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "color-scheme", content: "only light" },
-      { title: "Amora Acessórios | Joias e semijoias em Timóteo - MG" },
-      {
-        name: "description",
-        content:
-          "Pulseiras, anéis, colares e bolsas na Amora Acessórios. Visite nossa loja em Olaria, Timóteo - MG, ou fale pelo WhatsApp.",
-      },
+      { title: DEFAULT_TITLE },
+      { name: "description", content: DEFAULT_DESCRIPTION },
       { name: "author", content: "Amora Acessórios" },
-      { property: "og:title", content: "Amora Acessórios — Timóteo, MG" },
-      {
-        property: "og:description",
-        content: "Acessórios que brilham com você. Visite a loja ou chame no WhatsApp.",
-      },
-      { property: "og:image", content: hero },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "pt_BR" },
+      { property: "og:site_name", content: "Amora Acessórios" },
+      { property: "og:title", content: DEFAULT_TITLE },
+      { property: "og:description", content: DEFAULT_DESCRIPTION },
+      { property: "og:url", content: SITE_URL },
+      { property: "og:image", content: OG_IMAGE_URL },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:image", content: hero },
+      { name: "twitter:image", content: OG_IMAGE_URL },
     ],
     links: [
       {

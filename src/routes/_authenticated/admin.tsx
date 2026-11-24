@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, LogOut, ArrowUp, ArrowDown, Camera, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, ArrowUp, ArrowDown, Camera, Check, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { categoriesQuery, productsQuery, type Product, type Category, type ListingType } from "@/lib/catalog";
 import { brl } from "@/lib/format";
-import { compressImage } from "@/lib/image";
+import { compressImage } from "@/lib/compress-image";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [
@@ -64,6 +64,15 @@ function ProductsTab() {
     const { error } = await supabase.from("products").update({ in_stock: v }).eq("id", p.id);
     if (error) { toast.error("Erro ao atualizar"); qc.invalidateQueries({ queryKey: ["products"] }); }
   }
+  async function copyProductLink(p: Product) {
+    const url = `${window.location.origin}/?produto=${encodeURIComponent(p.id)}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copiado!");
+    } catch {
+      toast.error("Não foi possível copiar o link");
+    }
+  }
   async function remove() {
     if (!del) return;
     const { error } = await supabase.from("products").delete().eq("id", del.id);
@@ -106,6 +115,7 @@ function ProductsTab() {
                   </span>
                 </label>
               </div>
+              <button type="button" aria-label="Copiar link do produto" title="Copiar link" onClick={() => copyProductLink(p)} className="p-2.5 text-muted-foreground hover:text-foreground"><Link2 className="h-5 w-5" /></button>
               <button aria-label="Editar" onClick={() => setEditing(p)} className="p-2.5"><Pencil className="h-5 w-5" /></button>
               <button aria-label="Excluir" onClick={() => setDel(p)} className="p-2.5 text-destructive"><Trash2 className="h-5 w-5" /></button>
             </li>
@@ -153,9 +163,17 @@ function ProductForm({ product, cats, onClose }: { product: Product | null; cats
     if (!f) return;
     setUploading(true);
     try {
-      const { blob, ext } = await compressImage(f);
+      const optimized = await compressImage(f);
+      const ext =
+        optimized.type === "image/webp"
+          ? "webp"
+          : optimized.type === "image/jpeg"
+            ? "jpg"
+            : optimized.name.split(".").pop()?.toLowerCase() || "jpg";
       const path = `${crypto.randomUUID()}.${ext}`;
-      const up = await supabase.storage.from("product-images").upload(path, blob, { contentType: blob.type });
+      const up = await supabase.storage
+        .from("product-images")
+        .upload(path, optimized, { contentType: optimized.type || f.type });
       if (up.error) throw up.error;
       const s = await supabase.storage.from("product-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
       if (s.error) throw s.error;
@@ -200,9 +218,9 @@ function ProductForm({ product, cats, onClose }: { product: Product | null; cats
         <form onSubmit={save} className="space-y-3">
           <label className="relative flex aspect-4/5 w-40 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted mx-auto">
             {imageUrl ? <img src={imageUrl} alt="" className="h-full w-full object-cover" /> : (
-              <span className="flex flex-col items-center gap-1 text-xs text-muted-foreground"><Camera className="h-6 w-6" />{uploading ? "Enviando..." : "Adicionar foto"}</span>
+              <span className="flex flex-col items-center gap-1 px-2 text-center text-xs text-muted-foreground"><Camera className="h-6 w-6" />{uploading ? "Otimizando e enviando..." : "Adicionar foto"}</span>
             )}
-            {uploading && imageUrl && <span className="absolute inset-0 flex items-center justify-center bg-background/70 text-xs">Enviando...</span>}
+            {uploading && imageUrl && <span className="absolute inset-0 flex items-center justify-center bg-background/80 px-2 text-center text-xs font-medium">Otimizando e enviando...</span>}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
           </label>
           <div className="space-y-1.5">
@@ -248,7 +266,7 @@ function ProductForm({ product, cats, onClose }: { product: Product | null; cats
           <label className="flex items-center justify-between rounded-lg border border-border px-3 py-3"><span>Destaque</span><Switch checked={featured} onCheckedChange={setFeatured} /></label>
           <label className="flex items-center justify-between rounded-lg border border-border px-3 py-3"><span>{isRental ? "Disponível" : "Em estoque"}</span><Switch checked={inStock} onCheckedChange={setInStock} /></label>
           <button disabled={saving || uploading} className="w-full rounded-full bg-primary py-3.5 text-sm font-semibold uppercase tracking-widest text-primary-foreground disabled:opacity-60">
-            {saving ? "Salvando..." : "Salvar"}
+            {uploading ? "Otimizando e enviando..." : saving ? "Salvando..." : "Salvar"}
           </button>
         </form>
       </DialogContent>
