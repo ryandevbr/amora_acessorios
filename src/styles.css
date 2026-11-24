@@ -108,6 +108,7 @@
   html {
     color-scheme: only light;
     forced-color-adjust: none;
+    scroll-behavior: smooth;
   }
 
   * {

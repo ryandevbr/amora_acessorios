@@ -30,11 +30,19 @@ const hours = [
   { d: "Sábado", h: "9h às 16h" },
 ];
 
-function WaButton({ label = "Chamar no WhatsApp", light = false }: { label?: string; light?: boolean }) {
+function WaButton({
+  label = "Chamar no WhatsApp",
+  light = false,
+  className = "",
+}: {
+  label?: string;
+  light?: boolean;
+  className?: string;
+}) {
   return (
     <a href={WA} target="_blank" rel="noreferrer"
-      className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-widest transition-transform hover:scale-[1.03] ${light ? "bg-gold-gradient text-accent-foreground" : "bg-primary text-primary-foreground"}`}>
-      <MessageCircle className="h-5 w-5" /> {label}
+      className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-widest transition-transform hover:scale-[1.03] ${light ? "bg-gold-gradient text-accent-foreground" : "bg-primary text-primary-foreground"} ${className}`}>
+      <MessageCircle className="h-5 w-5 shrink-0" /> {label}
     </a>
   );
 }
@@ -59,9 +67,23 @@ function Index() {
             <p className="mt-6 max-w-md text-primary-foreground/75">
               Pulseiras, anéis, colares e bolsas escolhidos a dedo para completar o seu estilo. Em Timóteo - MG.
             </p>
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <WaButton light />
-              <a href="#vitrine" className="inline-flex items-center justify-center rounded-full border border-gold/50 px-7 py-4 text-sm font-semibold uppercase tracking-widest text-gold">Ver vitrine</a>
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center">
+              <WaButton light className="w-full sm:w-auto" />
+              <div className="grid grid-cols-2 gap-3 sm:contents">
+                <a
+                  href="#vitrine"
+                  className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-gold/50 px-3 py-3.5 text-xs font-semibold uppercase tracking-wider text-gold transition-colors hover:border-gold hover:bg-gold/10 sm:px-7 sm:py-4 sm:text-sm sm:tracking-widest"
+                >
+                  Ver vitrine
+                </a>
+                <a
+                  href="#onde-estamos"
+                  className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gold/50 px-3 py-3.5 text-xs font-semibold uppercase tracking-wider text-gold transition-colors hover:border-gold hover:bg-gold/10 sm:gap-2 sm:px-7 sm:py-4 sm:text-sm sm:tracking-widest"
+                >
+                  <MapPin className="h-4 w-4 shrink-0" />
+                  Onde estamos
+                </a>
+              </div>
             </div>
           </div>
           <img src={hero} alt="Mão com pulseiras e anel dourados sobre bolsa de palha" width={1024} height={1536}
@@ -71,7 +93,7 @@ function Index() {
 
       <Catalog />
 
-      <section id="visite" className="bg-secondary">
+      <section id="onde-estamos" className="scroll-mt-16 bg-secondary">
         <div className="mx-auto grid max-w-6xl gap-6 px-6 py-20 md:grid-cols-2">
           <div className="rounded-2xl bg-plum p-10 text-primary-foreground">
             <MapPin className="h-8 w-8 text-gold" />
