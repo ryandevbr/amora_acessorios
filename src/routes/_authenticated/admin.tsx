@@ -198,7 +198,7 @@ function ProductForm({ product, cats, onClose }: { product: Product | null; cats
           <DialogDescription>Preencha as informações da peça.</DialogDescription>
         </DialogHeader>
         <form onSubmit={save} className="space-y-3">
-          <label className="relative flex aspect-[4/5] w-40 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted mx-auto">
+          <label className="relative flex aspect-4/5 w-40 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted mx-auto">
             {imageUrl ? <img src={imageUrl} alt="" className="h-full w-full object-cover" /> : (
               <span className="flex flex-col items-center gap-1 text-xs text-muted-foreground"><Camera className="h-6 w-6" />{uploading ? "Enviando..." : "Adicionar foto"}</span>
             )}

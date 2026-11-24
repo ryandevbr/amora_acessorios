@@ -262,7 +262,7 @@ export function Catalog() {
       {prods.isLoading ? (
         <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="aspect-[4/5] animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="aspect-4/5 animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       ) : list.length === 0 ? (
@@ -277,7 +277,7 @@ export function Catalog() {
               <button
                 type="button"
                 onClick={() => setSel(p)}
-                className="relative block aspect-[4/5] overflow-hidden bg-muted"
+                className="relative block aspect-4/5 overflow-hidden bg-muted"
               >
                 {p.image_url && (
                   <img
@@ -314,7 +314,7 @@ export function Catalog() {
         <DialogContent className="max-h-[92vh] overflow-y-auto p-0 sm:max-w-lg">
           {sel && (
             <>
-              <div className="relative aspect-[4/5] w-full bg-muted">
+              <div className="relative aspect-4/5 w-full bg-muted">
                 {sel.image_url && (
                   <img src={sel.image_url} alt={sel.name} className="h-full w-full object-cover" />
                 )}
