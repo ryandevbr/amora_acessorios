@@ -21,7 +21,7 @@ const OG_IMAGE_URL = `${SITE_URL}/og-image.png`;
 const DEFAULT_TITLE =
   "Amora Acessórios | Semijoias, Acessórios e Aluguel de Bolsas em Timóteo";
 const DEFAULT_DESCRIPTION =
-  "Pulseiras, anéis, colares e aluguel de bolsas de festa em Timóteo - MG. Confira nossa vitrine online e peça pelo WhatsApp.";
+  "Loja de acessórios, semijoias e aluguel de bolsas de festa em Timóteo - MG. Confira nossa vitrine online, consulte disponibilidade e peça direto pelo WhatsApp.";
 
 function NotFoundComponent() {
   return (
@@ -86,6 +86,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "color-scheme", content: "only light" },
+      // TEMPORÁRIO DA PRÉVIA: remover ao conectar o domínio oficial .com.br
+      { name: "robots", content: "noindex, nofollow" },
       { title: DEFAULT_TITLE },
       { name: "description", content: DEFAULT_DESCRIPTION },
       { name: "author", content: "Amora Acessórios" },
@@ -96,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: DEFAULT_DESCRIPTION },
       { property: "og:url", content: SITE_URL },
       { property: "og:image", content: OG_IMAGE_URL },
-      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:type", content: "image/png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },

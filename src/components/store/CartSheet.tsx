@@ -10,7 +10,7 @@ export function CartButton() {
   return (
     <button onClick={() => setOpen(true)} aria-label="Abrir sacola"
       className="fixed bottom-24 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xl">
-      <ShoppingBag className="h-6 w-6" />
+      <ShoppingBag aria-hidden="true" className="h-6 w-6" />
       <span className="bg-gold-gradient absolute -right-1 -top-1 flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-bold text-accent-foreground">{count}</span>
     </button>
   );
@@ -39,11 +39,11 @@ export function CartSheet() {
                     <p className="text-sm text-muted-foreground">{brl(l.unitPrice)}</p>
                   </div>
                   <div className="flex items-center rounded-full border border-border">
-                    <button aria-label="Diminuir" onClick={() => setQty(l.id, l.qty - 1)} className="p-2"><Minus className="h-4 w-4" /></button>
+                    <button aria-label="Diminuir" onClick={() => setQty(l.id, l.qty - 1)} className="p-2"><Minus aria-hidden="true" className="h-4 w-4" /></button>
                     <span className="w-6 text-center text-sm font-semibold">{l.qty}</span>
-                    <button aria-label="Aumentar" onClick={() => setQty(l.id, l.qty + 1)} className="p-2"><Plus className="h-4 w-4" /></button>
+                    <button aria-label="Aumentar" onClick={() => setQty(l.id, l.qty + 1)} className="p-2"><Plus aria-hidden="true" className="h-4 w-4" /></button>
                   </div>
-                  <button aria-label="Remover" onClick={() => remove(l.id)} className="p-2 text-muted-foreground"><Trash2 className="h-4 w-4" /></button>
+                  <button aria-label="Remover" onClick={() => remove(l.id)} className="p-2 text-muted-foreground"><Trash2 aria-hidden="true" className="h-4 w-4" /></button>
                 </li>
               ))}
             </ul>
@@ -70,7 +70,7 @@ export function CartSheet() {
             <div className="mb-4 flex justify-between text-lg"><span>Subtotal</span><span className="font-semibold">{brl(total)}</span></div>
             <a href={whatsappLink(buildOrderMessage(lines, delivery, name))} target="_blank" rel="noreferrer"
               className="bg-gold-gradient flex items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold uppercase tracking-widest text-accent-foreground">
-              <MessageCircle className="h-5 w-5" /> Finalizar pedido no WhatsApp
+              <MessageCircle aria-hidden="true" className="h-5 w-5" /> Finalizar pedido no WhatsApp
             </a>
           </div>
         )}

@@ -8,10 +8,10 @@ import { CartButton, CartSheet } from "@/components/store/CartSheet";
 type HeroImage = { src: string; alt: string };
 
 const HERO_ALT_BY_FILE: Record<string, string> = {
-  "hero.jpg": "Mão com pulseiras e anel dourados sobre bolsa de palha",
-  "hero-2.jpg": "Acessórios dourados e peças selecionadas da Amora Acessórios",
-  "hero-3.jpg": "Bolsas e semijoias elegantes da Amora Acessórios",
-  "hero-4.jpg": "Coleção de joias, semijoias e bolsas da Amora Acessórios",
+  "hero.jpg": "Acessórios dourados e bolsas selecionadas da Amora Acessórios em Timóteo",
+  "hero-2.jpg": "Semijoias e acessórios femininos em destaque na Amora Acessórios em Timóteo",
+  "hero-3.jpg": "Bolsas de festa e acessórios elegantes da Amora Acessórios em Timóteo",
+  "hero-4.jpg": "Coleção de joias, semijoias e bolsas da Amora Acessórios em Timóteo",
 };
 
 const discoveredHeroModules = import.meta.glob<string>(
@@ -25,7 +25,7 @@ const extraHeroImages: HeroImage[] = Object.entries(discoveredHeroModules)
   .sort((a, b) => a.file.localeCompare(b.file, undefined, { numeric: true }))
   .map(({ file, src }, index) => ({
     src,
-    alt: HERO_ALT_BY_FILE[file] ?? `Coleção Amora Acessórios — destaque ${index + 2}`,
+    alt: HERO_ALT_BY_FILE[file] ?? `Acessórios e bolsas da Amora Acessórios em Timóteo — foto ${index + 2}`,
   }));
 
 const heroImages: HeroImage[] = [
@@ -58,7 +58,7 @@ function WaButton({
   return (
     <a href={WA} target="_blank" rel="noreferrer"
       className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-semibold uppercase tracking-widest transition-transform hover:scale-[1.03] ${light ? "bg-gold-gradient text-accent-foreground" : "bg-primary text-primary-foreground"} ${className}`}>
-      <MessageCircle className="h-5 w-5 shrink-0" /> {label}
+      <MessageCircle aria-hidden="true" className="h-5 w-5 shrink-0" /> {label}
     </a>
   );
 }
@@ -109,6 +109,8 @@ function HeroSlideshow() {
               width={1024}
               height={1536}
               loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
+              fetchPriority={i === 0 ? "high" : undefined}
               aria-hidden={!active}
               className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${
                 active ? "z-10 opacity-100" : "z-0 opacity-0"
@@ -169,7 +171,8 @@ function Index() {
             <div className="flex items-center gap-3">
               <img
                 src="/logo-diamante.png"
-                alt="Amora Acessórios"
+                alt="Amora Acessórios - Timóteo MG"
+                decoding="async"
                 className="h-25 w-25 object-contain"
               />
               <span className="text-gold-gradient font-display text-3xl font-semibold tracking-[0.3em]">AMORA</span>
@@ -193,7 +196,7 @@ function Index() {
                   href="#onde-estamos"
                   className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gold/50 px-3 py-3.5 text-xs font-semibold uppercase tracking-wider text-gold transition-colors hover:border-gold hover:bg-gold/10 sm:gap-2 sm:px-7 sm:py-4 sm:text-sm sm:tracking-widest"
                 >
-                  <MapPin className="h-4 w-4 shrink-0" />
+                  <MapPin aria-hidden="true" className="h-4 w-4 shrink-0" />
                   Onde estamos
                 </a>
               </div>
@@ -208,13 +211,13 @@ function Index() {
       <section id="onde-estamos" className="scroll-mt-16 bg-secondary">
         <div className="mx-auto grid max-w-6xl gap-6 px-6 py-20 md:grid-cols-2">
           <div className="rounded-2xl bg-plum p-10 text-primary-foreground">
-            <MapPin className="h-8 w-8 text-gold" />
+            <MapPin aria-hidden="true" className="h-8 w-8 text-gold" />
             <h2 className="mt-4 font-display text-5xl text-gold-gradient">Onde estamos</h2>
             <p className="mt-6 text-lg">Rua 68, nº 22<br />Olaria, Timóteo – MG</p>
             <a href={MAPS} target="_blank" rel="noreferrer" className="mt-8 inline-block border-b border-gold pb-1 text-sm uppercase tracking-widest text-gold">Abrir no mapa</a>
           </div>
           <div className="rounded-2xl bg-card p-10">
-            <Clock className="h-8 w-8 text-gold" />
+            <Clock aria-hidden="true" className="h-8 w-8 text-gold" />
             <h2 className="mt-4 font-display text-5xl italic">Nosso horário</h2>
             <ul className="mt-6 divide-y divide-border">
               {hours.map((x) => (
@@ -267,7 +270,7 @@ function Index() {
 
       <a href={WA} target="_blank" rel="noreferrer" aria-label="WhatsApp"
         className="bg-gold-gradient fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-accent-foreground shadow-xl">
-        <MessageCircle className="h-6 w-6" />
+        <MessageCircle aria-hidden="true" className="h-6 w-6" />
       </a>
       <CartButton />
       <CartSheet />

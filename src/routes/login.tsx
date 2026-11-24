@@ -33,7 +33,8 @@ function Login() {
         <div className="flex items-center justify-center gap-2">
           <img
             src="/logo-diamante.png"
-            alt="Amora Acessórios"
+            alt="Amora Acessórios - Timóteo MG"
+            decoding="async"
             className="h-10 w-10 object-contain"
           />
           <span className="font-display text-2xl font-semibold tracking-[0.3em]">AMORA</span>

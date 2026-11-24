@@ -36,7 +36,7 @@ function Admin() {
     <main className="min-h-screen bg-background font-sans">
       <header className="sticky top-0 z-20 flex items-center justify-between bg-plum px-4 py-3 text-primary-foreground">
         <Link to="/" className="text-gold-gradient font-display text-xl font-semibold tracking-[0.3em]">AMORA</Link>
-        <button onClick={logout} className="flex items-center gap-1.5 text-sm"><LogOut className="h-4 w-4" /> Sair</button>
+        <button onClick={logout} className="flex items-center gap-1.5 text-sm"><LogOut aria-hidden="true" className="h-4 w-4" /> Sair</button>
       </header>
       <div className="mx-auto max-w-2xl p-4">
         <Tabs defaultValue="produtos">
@@ -84,14 +84,22 @@ function ProductsTab() {
   return (
     <div className="mt-4">
       <button onClick={() => setEditing("new")} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 text-sm font-semibold uppercase tracking-widest text-primary-foreground">
-        <Plus className="h-5 w-5" /> Novo Produto
+        <Plus aria-hidden="true" className="h-5 w-5" /> Novo Produto
       </button>
       {isLoading ? <p className="mt-6 text-center text-muted-foreground">Carregando...</p> : (
         <ul className="mt-4 space-y-2">
           {prods.map((p) => (
             <li key={p.id} className="flex items-center gap-3 rounded-xl border border-border bg-card p-2">
               <div className="h-16 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
-                {p.image_url && <img src={p.image_url} alt="" className="h-full w-full object-cover" />}
+                {p.image_url && (
+                  <img
+                    src={p.image_url}
+                    alt={`${p.name} — ${p.listing_type === "rental" ? "Aluguel de bolsa" : "Acessório"} na Amora Acessórios Timóteo`}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
@@ -217,8 +225,15 @@ function ProductForm({ product, cats, onClose }: { product: Product | null; cats
         </DialogHeader>
         <form onSubmit={save} className="space-y-3">
           <label className="relative flex aspect-4/5 w-40 cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted mx-auto">
-            {imageUrl ? <img src={imageUrl} alt="" className="h-full w-full object-cover" /> : (
-              <span className="flex flex-col items-center gap-1 px-2 text-center text-xs text-muted-foreground"><Camera className="h-6 w-6" />{uploading ? "Otimizando e enviando..." : "Adicionar foto"}</span>
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={name.trim() ? `Prévia de ${name.trim()} — Amora Acessórios` : "Prévia da foto do produto na Amora Acessórios"}
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span className="flex flex-col items-center gap-1 px-2 text-center text-xs text-muted-foreground"><Camera aria-hidden="true" className="h-6 w-6" />{uploading ? "Otimizando e enviando..." : "Adicionar foto"}</span>
             )}
             {uploading && imageUrl && <span className="absolute inset-0 flex items-center justify-center bg-background/80 px-2 text-center text-xs font-medium">Otimizando e enviando...</span>}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />

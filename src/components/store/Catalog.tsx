@@ -21,6 +21,10 @@ const listingFilters: { value: ListingFilter; label: string }[] = [
   { value: "rental", label: "Aluguel de Bolsas" },
 ];
 
+function productImageAlt(p: Product) {
+  return `${p.name} — ${p.listing_type === "rental" ? "Aluguel de bolsa" : "Acessório"} na Amora Acessórios Timóteo`;
+}
+
 function Price({ p, big = false }: { p: Product; big?: boolean }) {
   const isRental = p.listing_type === "rental";
   return (
@@ -67,7 +71,7 @@ function CardActionButton({
         onClick={() => onConsultRental(p)}
         className="flex w-full items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground transition-opacity hover:opacity-95"
       >
-        <Calendar className="h-4 w-4" /> Consultar data
+        <Calendar aria-hidden="true" className="h-4 w-4" /> Consultar data
       </button>
     );
   }
@@ -80,7 +84,7 @@ function CardActionButton({
         rel="noreferrer"
         className="flex w-full items-center justify-center gap-1.5 rounded-full border border-border px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
       >
-        <MessageCircle className="h-4 w-4" /> Consultar
+        <MessageCircle aria-hidden="true" className="h-4 w-4" /> Consultar
       </a>
     );
   return (
@@ -93,7 +97,7 @@ function CardActionButton({
       }}
       className="flex w-full items-center justify-center gap-1.5 rounded-full bg-primary px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-primary-foreground"
     >
-      <ShoppingBag className="h-4 w-4" /> Adicionar à sacola
+      <ShoppingBag aria-hidden="true" className="h-4 w-4" /> Adicionar à sacola
     </button>
   );
 }
@@ -153,7 +157,7 @@ function RentalInquiryForm({ product }: { product: Product }) {
         rel="noreferrer"
         className="bg-gold-gradient flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-widest text-accent-foreground transition-transform hover:scale-[1.01]"
       >
-        <MessageCircle className="h-4 w-4 shrink-0" /> Consultar disponibilidade no WhatsApp
+        <MessageCircle aria-hidden="true" className="h-4 w-4 shrink-0" /> Consultar disponibilidade no WhatsApp
       </a>
     </div>
   );
@@ -232,12 +236,12 @@ function ShareProductButton({ product }: { product: Product }) {
     >
       {copied ? (
         <>
-          <Check className="h-3.5 w-3.5 text-primary" />
+          <Check aria-hidden="true" className="h-3.5 w-3.5 text-primary" />
           <span>Link copiado!</span>
         </>
       ) : (
         <>
-          <Share2 className="h-3.5 w-3.5" />
+          <Share2 aria-hidden="true" className="h-3.5 w-3.5" />
           <span>Compartilhar</span>
         </>
       )}
@@ -329,7 +333,7 @@ export function Catalog() {
       </div>
 
       <div className="relative mx-auto mt-6 max-w-md">
-        <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search aria-hidden="true" className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -373,8 +377,9 @@ export function Catalog() {
                 {p.image_url && (
                   <img
                     src={p.image_url}
-                    alt={p.name}
+                    alt={productImageAlt(p)}
                     loading="lazy"
+                    decoding="async"
                     className={`h-full w-full object-cover ${!p.in_stock ? "opacity-60 grayscale" : ""}`}
                   />
                 )}
@@ -413,7 +418,8 @@ export function Catalog() {
                   {sel.image_url && (
                     <img
                       src={sel.image_url}
-                      alt={sel.name}
+                      alt={productImageAlt(sel)}
+                      decoding="async"
                       className="block h-auto max-h-[65dvh] w-full object-contain"
                     />
                   )}
