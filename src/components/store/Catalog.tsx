@@ -313,35 +313,47 @@ export function Catalog() {
       <Dialog open={!!sel} onOpenChange={(o) => !o && setSel(null)}>
         <DialogContent
           onOpenAutoFocus={(e) => e.preventDefault()}
-          className="max-h-[90dvh] overflow-y-auto p-0 sm:max-w-lg"
+          className="flex max-h-[90dvh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
         >
           {sel && (
-            <>
-              <div className="relative aspect-4/5 w-full overflow-hidden rounded-t-2xl bg-muted">
-                {sel.image_url && (
-                  <img src={sel.image_url} alt={sel.name} className="h-full w-full object-cover" />
-                )}
-                <Badges p={sel} />
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <div className="flex flex-col">
+                <div className="relative h-64 w-full shrink-0 overflow-hidden bg-muted sm:h-80">
+                  {sel.image_url && (
+                    <img
+                      src={sel.image_url}
+                      alt={sel.name}
+                      className="block h-full w-full object-cover"
+                    />
+                  )}
+                  <Badges p={sel} />
+                </div>
+                <div className="relative z-10 flex shrink-0 flex-col gap-4 p-5 pb-7">
+                  <DialogTitle className="font-display text-3xl font-medium">
+                    {sel.name}
+                  </DialogTitle>
+                  <Price p={sel} big />
+                  {sel.description ? (
+                    <DialogDescription className="whitespace-pre-line text-sm">
+                      {sel.description}
+                    </DialogDescription>
+                  ) : (
+                    <DialogDescription className="sr-only">
+                      Detalhes de {sel.name}
+                    </DialogDescription>
+                  )}
+                  {sel.listing_type === "rental" ? (
+                    <RentalInquiryForm key={sel.id} product={sel} />
+                  ) : (
+                    <CardActionButton
+                      p={sel}
+                      onConsultRental={setSel}
+                      onDone={() => setSel(null)}
+                    />
+                  )}
+                </div>
               </div>
-              <div className="space-y-4 p-5 pb-6">
-                <DialogTitle className="font-display text-3xl font-medium">{sel.name}</DialogTitle>
-                <Price p={sel} big />
-                {sel.description ? (
-                  <DialogDescription className="whitespace-pre-line text-sm">
-                    {sel.description}
-                  </DialogDescription>
-                ) : (
-                  <DialogDescription className="sr-only">
-                    Detalhes de {sel.name}
-                  </DialogDescription>
-                )}
-                {sel.listing_type === "rental" ? (
-                  <RentalInquiryForm key={sel.id} product={sel} />
-                ) : (
-                  <CardActionButton p={sel} onConsultRental={setSel} onDone={() => setSel(null)} />
-                )}
-              </div>
-            </>
+            </div>
           )}
         </DialogContent>
       </Dialog>
