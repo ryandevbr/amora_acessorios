@@ -21,6 +21,34 @@ export function buildOrderMessage(lines: CartLine[], delivery: Delivery, name?: 
   return out.join("\n");
 }
 
+export function formatIsoDateBr(isoDate: string) {
+  const trimmed = isoDate.trim();
+  if (!trimmed) return "";
+  return trimmed.split("-").reverse().join("/");
+}
+
+export function todayIsoDate(now = new Date()) {
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function buildRentalMessage(
+  productName: string,
+  price: number,
+  eventDate?: string,
+  clientName?: string,
+) {
+  const formattedPrice = brl(price).replace(/\u00a0/g, " ");
+  const formattedDate = eventDate ? formatIsoDateBr(eventDate) : "";
+  const base = formattedDate
+    ? `Olá! Vi a ${productName} (${formattedPrice}) no site da Amora e gostaria de saber se está disponível para aluguel no dia ${formattedDate}.`
+    : `Olá! Vi a ${productName} (${formattedPrice}) no site da Amora e gostaria de saber sobre a disponibilidade para aluguel.`;
+  const trimmedName = clientName?.trim();
+  return trimmedName ? `${base}\nMeu nome é ${trimmedName}.` : base;
+}
+
 export function whatsappLink(text: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }

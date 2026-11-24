@@ -44,6 +44,7 @@ export type Database = {
           id: string
           image_url: string | null
           in_stock: boolean
+          listing_type: "sale" | "rental"
           name: string
           price: number
           promo_price: number | null
@@ -56,6 +57,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean
+          listing_type?: "sale" | "rental"
           name: string
           price?: number
           promo_price?: number | null
@@ -68,6 +70,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           in_stock?: boolean
+          listing_type?: "sale" | "rental"
           name?: string
           price?: number
           promo_price?: number | null

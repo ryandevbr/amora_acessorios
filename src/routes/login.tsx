@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Gem } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
@@ -32,7 +31,11 @@ function Login() {
     <main className="flex min-h-screen items-center justify-center bg-plum px-5 font-sans">
       <form onSubmit={submit} className="w-full max-w-sm rounded-2xl bg-card p-8 shadow-2xl">
         <div className="flex items-center justify-center gap-2">
-          <Gem className="h-6 w-6 text-gold" strokeWidth={1.2} />
+          <img
+            src="/logo-diamante.png"
+            alt="Amora Acessórios"
+            className="h-10 w-10 object-contain"
+          />
           <span className="font-display text-2xl font-semibold tracking-[0.3em]">AMORA</span>
         </div>
         <p className="mt-2 text-center text-sm text-muted-foreground">Painel da loja</p>

@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { categoriesQuery, productsQuery, type Product, type Category } from "@/lib/catalog";
+import { categoriesQuery, productsQuery, type Product, type Category, type ListingType } from "@/lib/catalog";
 import { brl } from "@/lib/format";
 import { compressImage } from "@/lib/image";
 
@@ -85,13 +85,25 @@ function ProductsTab() {
                 {p.image_url && <img src={p.image_url} alt="" className="h-full w-full object-cover" />}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">{p.name}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="truncate font-medium">{p.name}</p>
+                  {p.listing_type === "rental" && (
+                    <span className="shrink-0 rounded-full border border-gold/60 bg-plum px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">
+                      Aluguel
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">
                   {p.promo_price != null ? <><s>{brl(p.price)}</s> {brl(p.promo_price)}</> : brl(p.price)}
+                  {p.listing_type === "rental" && " / aluguel"}
                 </p>
                 <label className="mt-1 flex items-center gap-2 text-xs">
                   <Switch checked={p.in_stock} onCheckedChange={(v) => toggleStock(p, v)} />
-                  <span className={p.in_stock ? "text-foreground" : "text-destructive"}>{p.in_stock ? "Em estoque" : "Esgotado"}</span>
+                  <span className={p.in_stock ? "text-foreground" : "text-destructive"}>
+                    {p.listing_type === "rental"
+                      ? p.in_stock ? "Disponível" : "Indisponível"
+                      : p.in_stock ? "Em estoque" : "Esgotado"}
+                  </span>
                 </label>
               </div>
               <button aria-label="Editar" onClick={() => setEditing(p)} className="p-2.5"><Pencil className="h-5 w-5" /></button>
@@ -126,6 +138,7 @@ const toInput = (n: number | null | undefined) => (n == null ? "" : n.toFixed(2)
 function ProductForm({ product, cats, onClose }: { product: Product | null; cats: Category[]; onClose: () => void }) {
   const qc = useQueryClient();
   const [name, setName] = useState(product?.name ?? "");
+  const [listingType, setListingType] = useState<ListingType>(product?.listing_type ?? "sale");
   const [categoryId, setCategoryId] = useState(product?.category_id ?? cats[0]?.id ?? "");
   const [price, setPrice] = useState(toInput(product?.price));
   const [promo, setPromo] = useState(toInput(product?.promo_price));
@@ -158,12 +171,24 @@ function ProductForm({ product, cats, onClose }: { product: Product | null; cats
     if (!name.trim() || !Number.isFinite(p) || p <= 0) { toast.error("Informe nome e preço válidos"); return; }
     if (pp != null && (!Number.isFinite(pp) || pp <= 0)) { toast.error("Preço promocional inválido"); return; }
     setSaving(true);
-    const row = { name: name.trim(), category_id: categoryId || null, price: p, promo_price: pp, description: description.trim() || null, featured, in_stock: inStock, image_url: imageUrl || null };
+    const row = {
+      name: name.trim(),
+      listing_type: listingType,
+      category_id: categoryId || null,
+      price: p,
+      promo_price: pp,
+      description: description.trim() || null,
+      featured,
+      in_stock: inStock,
+      image_url: imageUrl || null,
+    };
     const { error } = product ? await supabase.from("products").update(row).eq("id", product.id) : await supabase.from("products").insert(row);
     setSaving(false);
     if (error) { toast.error("Erro ao salvar"); return; }
     toast.success("Produto salvo"); qc.invalidateQueries({ queryKey: ["products"] }); onClose();
   }
+
+  const isRental = listingType === "rental";
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
@@ -180,18 +205,48 @@ function ProductForm({ product, cats, onClose }: { product: Product | null; cats
             {uploading && imageUrl && <span className="absolute inset-0 flex items-center justify-center bg-background/70 text-xs">Enviando...</span>}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
           </label>
+          <div className="space-y-1.5">
+            <span className="block text-xs font-medium text-muted-foreground">Modalidade</span>
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                { value: "sale", label: "Venda" },
+                { value: "rental", label: "Aluguel" },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setListingType(opt.value)}
+                  className={`rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+                    listingType === opt.value
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-background text-foreground"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <input required placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} className={field} />
           <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={field}>
             <option value="">Sem categoria</option>
             {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
           <div className="grid grid-cols-2 gap-2">
-            <input required inputMode="decimal" placeholder="Preço (R$)" value={price} onChange={(e) => setPrice(e.target.value)} className={field} />
-            <input inputMode="decimal" placeholder="Promoção (opcional)" value={promo} onChange={(e) => setPromo(e.target.value)} className={field} />
+            <label className="block space-y-1">
+              <span className="block text-xs font-medium text-muted-foreground">
+                {isRental ? "Valor do aluguel (R$)" : "Preço (R$)"}
+              </span>
+              <input required inputMode="decimal" placeholder={isRental ? "Valor do aluguel (R$)" : "Preço (R$)"} value={price} onChange={(e) => setPrice(e.target.value)} className={field} />
+            </label>
+            <label className="block space-y-1">
+              <span className="block text-xs font-medium text-muted-foreground">Promoção (opcional)</span>
+              <input inputMode="decimal" placeholder="Promoção (opcional)" value={promo} onChange={(e) => setPromo(e.target.value)} className={field} />
+            </label>
           </div>
           <textarea placeholder="Descrição curta" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className={field} />
           <label className="flex items-center justify-between rounded-lg border border-border px-3 py-3"><span>Destaque</span><Switch checked={featured} onCheckedChange={setFeatured} /></label>
-          <label className="flex items-center justify-between rounded-lg border border-border px-3 py-3"><span>Em estoque</span><Switch checked={inStock} onCheckedChange={setInStock} /></label>
+          <label className="flex items-center justify-between rounded-lg border border-border px-3 py-3"><span>{isRental ? "Disponível" : "Em estoque"}</span><Switch checked={inStock} onCheckedChange={setInStock} /></label>
           <button disabled={saving || uploading} className="w-full rounded-full bg-primary py-3.5 text-sm font-semibold uppercase tracking-widest text-primary-foreground disabled:opacity-60">
             {saving ? "Salvando..." : "Salvar"}
           </button>

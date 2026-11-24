@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Gem, MapPin, Clock, MessageCircle } from "lucide-react";
+import { MapPin, Clock, MessageCircle } from "lucide-react";
 import hero from "@/assets/hero.jpg";
 import { Catalog } from "@/components/store/Catalog";
 import { CartButton, CartSheet } from "@/components/store/CartSheet";
@@ -46,7 +46,11 @@ function Index() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 pb-16 pt-10 md:grid-cols-2 md:py-24">
           <div>
             <div className="flex items-center gap-3">
-              <Gem className="h-7 w-7 text-gold" strokeWidth={1.2} />
+              <img
+                src="/logo-diamante.png"
+                alt="Amora Acessórios"
+                className="h-25 w-25 object-contain"
+              />
               <span className="text-gold-gradient font-display text-3xl font-semibold tracking-[0.3em]">AMORA</span>
             </div>
             <h1 className="mt-12 font-display text-5xl leading-[1.05] md:text-7xl">
