@@ -131,7 +131,7 @@ function RentalInquiryForm({ product }: { product: Product }) {
           min={minDate}
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
-          className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-gold"
+          className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-base text-foreground outline-none focus:border-gold sm:text-sm"
         />
       </label>
       <label className="block text-sm">
@@ -141,7 +141,7 @@ function RentalInquiryForm({ product }: { product: Product }) {
           placeholder="Como podemos te chamar?"
           value={clientName}
           onChange={(e) => setClientName(e.target.value)}
-          className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-gold"
+          className="mt-1.5 min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-base text-foreground outline-none focus:border-gold sm:text-sm"
         />
       </label>
       <p className="text-center font-display text-base italic text-muted-foreground">
@@ -311,16 +311,19 @@ export function Catalog() {
       </p>
 
       <Dialog open={!!sel} onOpenChange={(o) => !o && setSel(null)}>
-        <DialogContent className="max-h-[92vh] overflow-y-auto p-0 sm:max-w-lg">
+        <DialogContent
+          onOpenAutoFocus={(e) => e.preventDefault()}
+          className="max-h-[90dvh] overflow-y-auto p-0 sm:max-w-lg"
+        >
           {sel && (
             <>
-              <div className="relative aspect-4/5 w-full bg-muted">
+              <div className="relative aspect-4/5 w-full overflow-hidden rounded-t-2xl bg-muted">
                 {sel.image_url && (
                   <img src={sel.image_url} alt={sel.name} className="h-full w-full object-cover" />
                 )}
                 <Badges p={sel} />
               </div>
-              <div className="space-y-4 p-5">
+              <div className="space-y-4 p-5 pb-6">
                 <DialogTitle className="font-display text-3xl font-medium">{sel.name}</DialogTitle>
                 <Price p={sel} big />
                 {sel.description ? (
